@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Agende seu horário na Black Barber Shop de forma rápida e fácil">
+    <title>Agendar - Black Barber Shop</title>
+    <link rel="stylesheet" href="style.css">>
+    <style>
+        .booking-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--muted);
+            padding: 2.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+       
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+       
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--accent-strong);
+        }
+       
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text);
+            transition: var(--transition);
+        }
+       
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--accent-strong);
+            box-shadow: 0 0 0 6px rgba(0, 0, 0, 0.06);
+            outline: none;
+        }
+       
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+       
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+       
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+       
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            margin-bottom: 2rem;
+            display: none;
+        }
+       
+        .success-message.show {
+            display: block;
+            animation: slideDown 300ms ease-out;
+        }
+       
+        @keyframes slideDown {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <span class="logo-icon">✂️</span>
+                <span class="logo-text">BLACK BARBER</span>
+            </div>
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#services" class="nav-link">Serviços</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Planos</a></li>
+                <li><a href="index.html#about" class="nav-link">Sobre</a></li>
+                <li><a href="contact.html" class="nav-link">Contato</a></li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <section class="hero" style="min-height: 50vh;">
+        <div class="hero-content">
+            <h1 class="hero-title fade-in-up">Agende Seu Horário</h1>
+            <p class="hero-subtitle fade-in-up" style="animation-delay: 0.2s;">Rápido, fácil e seguro</p>
+        </div>
+    </section>
+
+
+    <section class="fade-in-section">
+        <div class="section-container">
+            <div class="success-message" id="successMessage">
+                ✓ Agendamento realizado com sucesso! Você receberá uma confirmação via WhatsApp.
+            </div>
+
+
+            <form class="booking-form" id="bookingForm">
+                <h2 style="text-align: center; margin-bottom: 2rem; color: var(--accent-strong);">Formulário de Agendamento</h2>
+
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="name">Nome Completo *</label>
+                        <input type="text" id="name" name="name" required placeholder="Seu nome">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Telefone/WhatsApp *</label>
+                        <input type="tel" id="phone" name="phone" required placeholder="(11) 9999-9999">
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" name="email" placeholder="seu@email.com">
+                </div>
+
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="service">Serviço Desejado *</label>
+                        <select id="service" name="service" required>
+                            <option value="">Selecione um serviço</option>
+                            <option value="corte">Corte de Cabelo Premium</option>
+                            <option value="barba">Barba Premium</option>
+                            <option value="tratamento">Tratamento Capilar</option>
+                            <option value="skincare">Skincare Facial</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Data Desejada *</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                </div>
+
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="time">Horário Preferido *</label>
+                        <select id="time" name="time" required>
+                            <option value="">Selecione um horário</option>
+                            <option value="09:30">09:30</option>
+                            <option value="10:00">10:00</option>
+                            <option value="10:30">10:30</option>
+                            <option value="11:00">11:00</option>
+                            <option value="11:30">11:30</option>
+                            <option value="14:00">14:00</option>
+                            <option value="14:30">14:30</option>
+                            <option value="15:00">15:00</option>
+                            <option value="15:30">15:30</option>
+                            <option value="16:00">16:00</option>
+                            <option value="16:30">16:30</option>
+                            <option value="17:00">17:00</option>
+                            <option value="17:30">17:30</option>
+                            <option value="18:00">18:00</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="professional">Profissional (Opcional)</label>
+                        <select id="professional" name="professional">
+                            <option value="">Qualquer profissional</option>
+                            <option value="kayque">kayque (Especialista Sênior)</option>
+                        </select>
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="plano">Plano ou Corte (Opcional)</label>
+                    <select id="plano" name="plano">
+                        <option value="">Sem plano</option>
+                        <option value="essencial">Corte Classico (R$ 40)</option>
+                        <option value="premium">Corte & Barba (R$ 50)</option>
+                        <option value="vip">Plano (R$ 117)</option>
+                    </select>
+                </div>
+
+
+                <div class="form-group">
+                    <label for="notes">Observações</label>
+                    <textarea id="notes" name="notes" placeholder="Deixe aqui qualquer observação importante..."></textarea>
+                </div>
+
+
+                <div style="text-align: center;">
+                    <button type="submit" class="btn-primary btn-lg">Agendar Agora</button>
+                </div>
+            </form>
+
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <p style="color: var(--text); margin-bottom: 1rem;">Prefere agendar por WhatsApp?</p>
+                <a href="https://api.whatsapp.com/send/?phone=1189389074&text&type=phone_number&app_absent=0" target="_blank" rel="noopener" class="btn-secondary btn-lg">
+                    💬 Enviar Mensagem no WhatsApp
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>BLACK BARBER SHOP</h4>
+                <p>Barbearia especializada em cabelo afro com atendimento premium.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Links Rápidos</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Serviços</a></li>
+                    <li><a href="planos.html">Planos</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contato</h4>
+                <ul>
+                    <li><a href="contact.html">Endereço</a></li>
+                    <li><a href="https://instagram.com/black.barbershop_">Instagram</a></li>
+                    <li><a href="tel:+5511989389074">Telefone</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BLACK BARBER SHOP. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Voltar ao topo">↑</button>
+
+
+    <script src="script.js"></script>
+    <script>
+        // Validar formulário e salvar dados
+        document.getElementById('bookingForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+           
+            // Validar campos obrigatórios
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const service = document.getElementById('service').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+           
+            if (!name || !phone || !service || !date || !time) {
+                alert('Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+           
+            // Salvar dados no localStorage
+            const bookingData = {
+                name,
+                phone,
+                email: document.getElementById('email').value,
+                service,
+                date,
+                time,
+                professional: document.getElementById('professional').value,
+                plano: document.getElementById('plano').value,
+                notes: document.getElementById('notes').value,
+                timestamp: new Date().toLocaleString('pt-BR')
+            };
+           
+            console.log('Agendamento:', bookingData);
+           
+            // Mostrar mensagem de sucesso
+            const successMsg = document.getElementById('successMessage');
+            successMsg.classList.add('show');
+           
+            // Limpar formulário
+            this.reset();
+           
+            // Esconder mensagem após 5 segundos
+            setTimeout(() => {
+                successMsg.classList.remove('show');
+            }, 5000);
+           
+            // Redirecionar para WhatsApp (opcional)
+            setTimeout(() => {
+                const msg = `Olá! Gostaria de confirmar meu agendamento:\n\nNome: ${name}\nServiço: ${service}\nData: ${date}\nHorário: ${time}`;
+                window.open(`https://wa.me/5511989389074?text=${encodeURIComponent(msg)}`, '_blank');
+            }, 1500);
+        });
+       
+        // Definir data mínima como hoje
+        const dateInput = document.getElementById('date');
+        const today = new Date().toISOString().split('T')[0];
+        dateInput.setAttribute('min', today);
+    </script>
+</body>
+</html>
+
