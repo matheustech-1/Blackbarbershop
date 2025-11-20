@@ -3,7 +3,6 @@
    BLACK BARBER SHOP
    ======================================== */
 
-
 // ========== DOM Elements ==========
 const navbar = document.querySelector('.navbar');
 const menuToggle = document.getElementById('menuToggle');
@@ -12,13 +11,11 @@ const navLinks = document.querySelectorAll('.nav-link');
 const scrollToTopBtn = document.getElementById('scrollToTop');
 const contactBtn = document.getElementById('contactBtn');
 
-
 // ========== Menu Toggle Mobile ==========
 menuToggle.addEventListener('click', () => {
     menuToggle.classList.toggle('active');
     navMenu.classList.toggle('active');
 });
-
 
 // Fechar menu ao clicar em um link
 navLinks.forEach(link => {
@@ -27,7 +24,6 @@ navLinks.forEach(link => {
         navMenu.classList.remove('active');
     });
 });
-
 
 // ========== Navbar Sticky com Blur ==========
 window.addEventListener('scroll', () => {
@@ -39,7 +35,6 @@ window.addEventListener('scroll', () => {
         navbar.style.backdropFilter = 'blur(12px)';
     }
 
-
     // Scroll to Top Button Visibility
     if (window.scrollY > 300) {
         scrollToTopBtn.classList.add('active');
@@ -47,7 +42,6 @@ window.addEventListener('scroll', () => {
         scrollToTopBtn.classList.remove('active');
     }
 });
-
 
 // ========== Scroll to Top ==========
 scrollToTopBtn.addEventListener('click', (e) => {
@@ -58,13 +52,11 @@ scrollToTopBtn.addEventListener('click', (e) => {
     });
 });
 
-
 // ========== Intersection Observer para Animações ==========
 const observerOptions = {
     threshold: 0.1,
     rootMargin: '0px 0px -100px 0px'
 };
-
 
 const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
@@ -75,12 +67,10 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
-
 // Observar todas as seções
 document.querySelectorAll('section').forEach(section => {
     observer.observe(section);
 });
-
 
 // ========== Animação de Cards ao Scroll ==========
 const observeCards = new IntersectionObserver((entries) => {
@@ -94,11 +84,9 @@ const observeCards = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.1 });
 
-
 document.querySelectorAll('.service-card, .pricing-card, .contact-card').forEach(card => {
     observeCards.observe(card);
 });
-
 
 // ========== Contact Button Modal ==========
 contactBtn.addEventListener('click', () => {
@@ -121,7 +109,6 @@ contactBtn.addEventListener('click', () => {
     });
 });
 
-
 // ========== Modal Simples ==========
 function showModal({ title, content, buttonText = 'Fechar' }) {
     // Remover modal anterior se existir
@@ -129,7 +116,6 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
     if (existingModal) {
         existingModal.remove();
     }
-
 
     const modalHTML = `
         <div class="modal-overlay">
@@ -148,14 +134,11 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
         </div>
     `;
 
-
     document.body.insertAdjacentHTML('beforeend', modalHTML);
-
 
     const overlay = document.querySelector('.modal-overlay');
     const closeBtn = document.querySelector('.modal-close');
     const actionBtn = document.querySelector('.modal-action');
-
 
     // Fechar ao clicar no botão
     closeBtn.addEventListener('click', () => {
@@ -163,12 +146,10 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
         setTimeout(() => overlay.remove(), 300);
     });
 
-
     actionBtn.addEventListener('click', () => {
         overlay.style.animation = 'fadeOut 300ms ease-out forwards';
         setTimeout(() => overlay.remove(), 300);
     });
-
 
     // Fechar ao clicar no overlay
     overlay.addEventListener('click', (e) => {
@@ -177,7 +158,6 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
             setTimeout(() => overlay.remove(), 300);
         }
     });
-
 
     // Adicionar estilos do modal dinamicamente
     if (!document.querySelector('style[data-modal]')) {
@@ -199,7 +179,6 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
                 backdrop-filter: blur(4px);
             }
 
-
             .modal-content {
                 background: white;
                 border-radius: 16px;
@@ -210,7 +189,6 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
                 animation: slideUp 300ms ease-out forwards;
             }
 
-
             .modal-header {
                 display: flex;
                 justify-content: space-between;
@@ -219,13 +197,11 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
                 border-bottom: 1px solid #d1d5db;
             }
 
-
             .modal-header h2 {
                 margin: 0;
                 font-size: 1.5rem;
                 color: #000;
             }
-
 
             .modal-close {
                 background: none;
@@ -242,17 +218,14 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
                 justify-content: center;
             }
 
-
             .modal-close:hover {
                 transform: rotate(90deg);
             }
-
 
             .modal-body {
                 padding: 1.5rem 2rem;
                 color: #0b0b0b;
             }
-
 
             .modal-footer {
                 padding: 1.5rem 2rem;
@@ -260,11 +233,9 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
                 text-align: right;
             }
 
-
             .modal-footer .btn-primary {
                 margin: 0;
             }
-
 
             @keyframes fadeIn {
                 from {
@@ -275,7 +246,6 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
                 }
             }
 
-
             @keyframes fadeOut {
                 from {
                     opacity: 1;
@@ -284,7 +254,6 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
                     opacity: 0;
                 }
             }
-
 
             @keyframes slideUp {
                 from {
@@ -301,12 +270,10 @@ function showModal({ title, content, buttonText = 'Fechar' }) {
     }
 }
 
-
 // ========== Validação de Formulários ==========
 function validateForm(form) {
     let isValid = true;
     const inputs = form.querySelectorAll('input, textarea, select');
-
 
     inputs.forEach(input => {
         if (input.hasAttribute('required') && !input.value.trim()) {
@@ -317,23 +284,19 @@ function validateForm(form) {
         }
     });
 
-
     return isValid;
 }
-
 
 // ========== Efeito Parallax ==========
 window.addEventListener('scroll', () => {
     const scrolled = window.scrollY;
     const shapes = document.querySelectorAll('.floating-shape');
 
-
     shapes.forEach((shape, index) => {
         const speed = (index + 1) * 0.1;
         shape.style.transform = `translateY(${scrolled * speed}px)`;
     });
 });
-
 
 // ========== Adicionar animação aos números (contador) ==========
 function animateValue(element, start, end, duration) {
@@ -348,7 +311,6 @@ function animateValue(element, start, end, duration) {
     };
     window.requestAnimationFrame(step);
 }
-
 
 // Observar elementos com estatísticas
 const statsObserver = new IntersectionObserver((entries) => {
@@ -365,11 +327,9 @@ const statsObserver = new IntersectionObserver((entries) => {
     });
 }, { threshold: 0.5 });
 
-
 document.querySelectorAll('.stat').forEach(stat => {
     statsObserver.observe(stat);
 });
-
 
 // ========== Smooth Scroll Links ==========
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -386,7 +346,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-
 // ========== Detect Reduced Motion ==========
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 if (!prefersReducedMotion) {
@@ -399,10 +358,6 @@ if (!prefersReducedMotion) {
     });
 }
 
-
 // ========== Log ==========
 console.log('%c🪮 BLACK BARBER SHOP 🪮', 'color: #000; font-size: 20px; font-weight: bold;');
 console.log('%cSite totalmente dinâmico e responsivo!', 'color: #1a1a1a; font-size: 14px;');
-
-
-
