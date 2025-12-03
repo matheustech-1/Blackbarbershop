@@ -10,6 +10,7 @@ const navMenu = document.getElementById('navMenu');
 const navLinks = document.querySelectorAll('.nav-link');
 const scrollToTopBtn = document.getElementById('scrollToTop');
 const contactBtn = document.getElementById('contactBtn');
+const paymentBtn = document.getElementById('paymentBtn');
 
 // ========== Menu Toggle Mobile ==========
 menuToggle.addEventListener('click', () => {
@@ -94,13 +95,12 @@ contactBtn.addEventListener('click', () => {
         title: 'Entre em Contato Conosco',
         content: `
             <div style="text-align: left; line-height: 1.8;">
-                <p><strong>📍 Endereço:</strong> Avenida Conceição, 104 - Diadema, SP</p>
-                <p><strong>📞 Telefone:</strong> (11) 98938-9074</p>
+                <p><strong>📍 Endereço:</strong> Rua das Barbas, 123 - São Paulo, SP</p>
+                <p><strong>📞 Telefone:</strong> (11) 98765-4321</p>
                 <p><strong>⏰ Horários:</strong></p>
                 <ul>
-                    <li>Terça a Quinta: 09:30 - 18:30</li>
-                    <li>Sexta: 09:30 - 19:30</li>
-                    <li>Sábado: 09:30 - 17:00</li>
+                    <li>Segunda a Sexta: 09:30 - 18:30</li>
+                    <li>Sábado: 09:30 - 18:30</li>
                     <li>Domingo: Fechado</li>
                 </ul>
                 <p><strong>📱 Instagram:</strong> @black.barbershop_</p>
