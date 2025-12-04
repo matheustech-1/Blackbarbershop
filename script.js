@@ -99,7 +99,7 @@ contactBtn.addEventListener('click', () => {
                 <p><strong>📞 Telefone:</strong> (11) 11989389074</p>
                 <p><strong>⏰ Horários:</strong></p>
                 <ul>
-                    <li>Terça a Quinta: 09:30 - 18:30</li>
+                    <li>Terça a Quinta 09:30 - 18:30</li>
                     <li>Sexta 09:30 - 19:30<li>
                     <li>Sábado: 09:30 - 18:30</li>
                     <li>Domingo: Fechado</li>
@@ -363,4 +363,5 @@ if (!prefersReducedMotion) {
 // ========== Log ==========
 console.log('%c🪮 BLACK BARBER SHOP 🪮', 'color: #000; font-size: 20px; font-weight: bold;');
 console.log('%cSite totalmente dinâmico e responsivo!', 'color: #1a1a1a; font-size: 14px;');
+
 
