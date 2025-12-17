@@ -10,48 +10,61 @@ const navMenu = document.getElementById('navMenu');
 const navLinks = document.querySelectorAll('.nav-link');
 const scrollToTopBtn = document.getElementById('scrollToTop');
 const contactBtn = document.getElementById('contactBtn');
-const paymentBtn = document.getElementById('paymentBtn');
+const paymentBtn = document.getElementById('paymentBtn') || document.getElementById('payButton');
+const marcarForm = document.getElementById('marcarForm') || document.getElementById('bookingForm');
 
 // ========== Menu Toggle Mobile ==========
-menuToggle.addEventListener('click', () => {
-    menuToggle.classList.toggle('active');
-    navMenu.classList.toggle('active');
-});
+if (menuToggle) {
+    menuToggle.addEventListener('click', () => {
+        menuToggle.classList.toggle('active');
+        if (navMenu) navMenu.classList.toggle('active');
+    });
+} 
 
 // Fechar menu ao clicar em um link
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        menuToggle.classList.remove('active');
-        navMenu.classList.remove('active');
+if (menuToggle && navMenu) {
+    navLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            menuToggle.classList.remove('active');
+            navMenu.classList.remove('active');
+        });
     });
-});
+} 
 
 // ========== Navbar Sticky com Blur ==========
 window.addEventListener('scroll', () => {
     if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.backdropFilter = 'blur(15px)';
+        if (navbar) {
+            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            navbar.style.backdropFilter = 'blur(15px)';
+        }
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.8)';
-        navbar.style.backdropFilter = 'blur(12px)';
+        if (navbar) {
+            navbar.style.background = 'rgba(255, 255, 255, 0.8)';
+            navbar.style.backdropFilter = 'blur(12px)';
+        }
     }
 
     // Scroll to Top Button Visibility
-    if (window.scrollY > 300) {
-        scrollToTopBtn.classList.add('active');
-    } else {
-        scrollToTopBtn.classList.remove('active');
+    if (scrollToTopBtn) {
+        if (window.scrollY > 300) {
+            scrollToTopBtn.classList.add('active');
+        } else {
+            scrollToTopBtn.classList.remove('active');
+        }
     }
-});
+}); 
 
 // ========== Scroll to Top ==========
-scrollToTopBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-        top: 0,
-        behavior: 'smooth'
+if (scrollToTopBtn) {
+    scrollToTopBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
     });
-});
+} 
 
 // ========== Intersection Observer para Animações ==========
 const observerOptions = {
@@ -90,26 +103,28 @@ document.querySelectorAll('.service-card, .pricing-card, .contact-card').forEach
 });
 
 // ========== Contact Button Modal ==========
-contactBtn.addEventListener('click', () => {
-    showModal({
-        title: 'Entre em Contato Conosco',
-        content: `
-            <div style="text-align: left; line-height: 1.8;">
-                <p><strong>📍 Endereço:</strong> Avenida Conceição, 104 - Diadema, SP</p>
-                <p><strong>📞 Telefone:</strong> (11) 11989389074</p>
-                <p><strong>⏰ Horários:</strong></p>
-                <ul>
-                    <li>Terça a Quinta 09:30 - 18:30</li>
-                    <li>Sexta 09:30 - 19:30<li>
-                    <li>Sábado: 09:30 - 18:30</li>
-                    <li>Domingo: Fechado</li>
-                </ul>
-                <p><strong>📱 Instagram:</strong> @black.barbershop_</p>
-            </div>
-        `,
-        buttonText: 'Fechar'
+if (contactBtn) {
+    contactBtn.addEventListener('click', () => {
+        showModal({
+            title: 'Entre em Contato Conosco',
+            content: `
+                <div style="text-align: left; line-height: 1.8;">
+                    <p><strong>📍 Endereço:</strong> Avenida conceição, 104 - Diadema, SP</p>
+                    <p><strong>📞 Telefone:</strong> (11) 989389074</p>
+                    <p><strong>⏰ Horários:</strong></p>
+                    <ul>
+                        <li>Segunda a Quinta: 09:30 - 18:30</li>
+                        <li>Sexta: 09:30 - 19:30</li>
+                        <li>Sábado: 09:30 - 17:00</li>
+                        <li>Domingo: Fechado</li>
+                    </ul>
+                    <p><strong>📱 Instagram:</strong> @black.barbershop_</p>
+                </div>
+            `,
+            buttonText: 'Fechar'
+        });
     });
-});
+} 
 
 // ========== Modal Simples ==========
 function showModal({ title, content, buttonText = 'Fechar' }) {
@@ -360,8 +375,31 @@ if (!prefersReducedMotion) {
     });
 }
 
+//Pagamentos por PIX - QR Code
+
+function gerarPix(valor) {
+  const chave = "11-989389074"; // SUA CHAVE PIX AQUI
+  const nomeRecebedor = "Black Barber";
+  const cidade = "SAO PAULO";
+  
+  const brcode = `
+000201
+26580014BR.GOV.BCB.PIX01${chave.length}${chave}
+52040000
+5303986
+540${valor.toFixed(2).replace(".", "")}
+5802BR
+59${nomeRecebedor.length}${nomeRecebedor}
+60${cidade.length}${cidade}
+62070503***`;
+
+  return brcode.replace(/\n/g, "");
+}
+
+
+
+
+
 // ========== Log ==========
 console.log('%c🪮 BLACK BARBER SHOP 🪮', 'color: #000; font-size: 20px; font-weight: bold;');
 console.log('%cSite totalmente dinâmico e responsivo!', 'color: #1a1a1a; font-size: 14px;');
-
-

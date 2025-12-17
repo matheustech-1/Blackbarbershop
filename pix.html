@@ -1,21 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-    <link rel="stylesheet" href="styles.css">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Black Barber - Formas de Pagamento</title>
+    <title>PIX - Formas de Pagamento</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <nav class="navbar">
   <div class="navbar-container">
         <div class="navbar-logo">
-              </li></a><span class="logo-icon">✂️</span>
-              <span class="logo-text"> <a href="index.html" class="logo" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 8px;">
-    <img src="imagens/logo.png" alt="" style="height: 40px;">
-    <h1 style="margin: 0; font-size: 24px;">BLACK BARBER</h1>
-</a>
-</span>
+              <a href="index.html" class="btn-primary">BLACK BARBER</a></span>
         </div>
      <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
         <span></span><span></span><span></span>
@@ -32,22 +27,18 @@
             <p class="hero-subtitle fade-in-up" style="animation-delay: 0.2s;">Use a chave PIX ou o QR Code para efetuar o pagamento</p>
         </div>
     </section>
-    </body>
 
-   <body>
-      <div class="pix-container">
+   <div class="pix-container">
 
   <h2 class="pix-title">Pagamento via PIX</h2>
+  <div id="paymentInfo" style="text-align:center; margin-bottom:10px; color:var(--accent-strong); font-weight:700;"></div>
 
   <!-- PIX Copia e Cola -->
   <div class="pix-box">
     <h3>PIX Copia e Cola</h3>
     <p class="pix-description">Copie o código abaixo e pague no seu banco:</p>
 
-    <textarea id="pixCode" class="pix-input" readonly>
-00020101021126580014BR.GOV.BCB.PIX0133119893890745204000053039865802BR5920Matheus Pereira6007Diadema62070503***6304E61F
-
-    </textarea>
+    <textarea id="pixCode" class="pix-input" readonly></textarea>
 
     <button class="btn-copy" onclick="copyPix()">Copiar Código PIX</button>
   </div>
@@ -57,12 +48,9 @@
     <h3>QR Code</h3>
     <p class="pix-description">Aponte a câmera ou aplicativo do banco:</p>
 
-    <img
-      id="qrImage"
-      class="qr-image"
-      src="https://via.placeholder.com/250x250.png?text=QR+CODE"
-      alt="QRCode PIX"
-    />
+     <textarea id="pixCode" class="pix-input" readonly></textarea>
+
+    <div id="qrcode" style="margin: 0 auto; text-align:center;"></div>
 
     <button class="btn-copy" onclick="downloadQR()">Baixar QR Code</button>
   </div>
@@ -142,41 +130,98 @@
   background: #ffd88f;
 }
 
-/* QR Code */
-.qr-image {
-  display: block;
-  margin: 15px auto;
-  width: 230px;
-  height: 230px;
-  border-radius: 10px;
-  box-shadow: 0 0 10px #0005;
-}
+
 </style>
 
 <script>
 // Copiar código PIX copia e cola
 function copyPix() {
   const pixCode = document.getElementById("pixCode");
-  pixCode.select();
-  pixCode.setSelectionRange(0, 999999);
-  document.execCommand("copy");
-  alert("Código PIX copiado!");
+  const text = (pixCode && (pixCode.value || pixCode.innerText)) || '';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Código PIX copiado!");
+    }).catch(() => {
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+
+  function fallbackCopy(text) {
+    try {
+      if (pixCode) { pixCode.select(); pixCode.setSelectionRange(0, 999999); }
+      document.execCommand("copy");
+      alert("Código PIX copiado!");
+    } catch (e) {
+      alert("Não foi possível copiar automaticamente. Selecione e copie manualmente.");
+    }
+  }
 }
 
-// Baixar QR Code
+// Baixar QR Code (suporta QR gerado dinamicamente)
 function downloadQR() {
-  const img = document.getElementById("qrImage");
-  const link = document.createElement("a");
-  link.href = img.src;
-  link.download = "pix-qrcode.png";
-  link.click();
-}
+  const qrcodeDiv = document.getElementById('qrcode');
+  let dataUrl = null;
+  if (qrcodeDiv) {
+    const img = qrcodeDiv.querySelector('img');
+    const canvas = qrcodeDiv.querySelector('canvas');
+    if (img && img.src) dataUrl = img.src;
+    else if (canvas && canvas.toDataURL) dataUrl = canvas.toDataURL('image/png');
+  }
+  if (dataUrl) {
+    const link = document.createElement("a");
+    link.href = dataUrl;
+    link.download = "pix-qrcode.png";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } else {
+    alert('QR code não disponível para download.');
+  }
+} 
+</script>
+
+<!-- Bibliotecas & Inicialização: QRCode e script principal -->
+<script src="vendor/qrcode.min.js"></script>
+<script src="script.js"></script>
+<script>
+// Preenche o código PIX com os parâmetros ?valor=...&servico=... e gera o QR
+(function() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const valor = params.get('valor');
+    const servico = params.get('servico');
+    const pixCode = document.getElementById('pixCode');
+    const qrcodeDiv = document.getElementById('qrcode');
+    const paymentInfo = document.getElementById('paymentInfo');
+
+    if (valor && pixCode) {
+      const valorNum = Number(valor);
+      if (paymentInfo) paymentInfo.textContent = `Serviço: ${servico || '—'} — Valor: R$ ${valorNum.toFixed(2).replace('.', ',')}`;
+      const codigoPix = (typeof gerarPix === 'function') ? gerarPix(valorNum) : (`VALOR:${valorNum.toFixed(2)}`);
+      pixCode.value = codigoPix;
+
+      if (typeof QRCode !== 'undefined' && qrcodeDiv) {
+        qrcodeDiv.innerHTML = '';
+        new QRCode(qrcodeDiv, {
+          text: codigoPix,
+          width: 250,
+          height: 250
+        });
+        qrcodeDiv.style.display = 'block';
+      }
+    } else {
+      if (paymentInfo) paymentInfo.textContent = 'Escolha um serviço em Agendar para iniciar o pagamento via PIX.';
+    }
+  } catch (e) {
+    console.warn('Erro ao preencher PIX por query params', e);
+  }
+})();
 </script>
 
    
        <div style="text-align: center; margin-top: 3rem;">
         <li><a href="pagamentos.html" class="btn-primary btn-lg">Voltar</a></li>
    </body>
-
 </html>
-

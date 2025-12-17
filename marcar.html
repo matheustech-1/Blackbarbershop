@@ -147,15 +147,21 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="service">Serviço Desejado *</label>
-                        <select id="service" name="service" required>
+                        <select id="service" name="service" required onchange="atualizarValorServico()">
                             <option value="">Selecione um serviço</option>
-                            <option value="corte">Corte de Cabelo Premium</option>
-                            <option value="barba">Barba Premium</option>
-                            <option value="tratamento">Tratamento Capilar</option>
-                            <option value="skincare">Skincare Facial</option>
-                            <option value="massagem">Massagem Terapêutica</option>
-                            <option value="combo">Pacote Personalizado</option>
+                            <option value="corte" data-preco="40">Corte de Cabelo Premium — R$40</option>
+                            <option value="barba" data-preco="20">Barba Premium — R$20</option>
+                            <option value="tratamento" data-preco="70">Tratamento Capilar — R$70</option>
+                            <option value="skincare" data-preco="30">Skincare Facial — R$30</option>
+                            <option value="massagem" data-preco="50">Massagem Terapêutica — R$50</option>
+                            <option value="combo" data-preco="100">Pacote Personalizado — R$100</option>
                         </select>
+
+                        <div class="form-group" id="precoServicoGroup" style="display:none; margin-top:0.5rem;">
+                            <label>Aproximado:</label>
+                            <div id="precoServico" style="font-weight:700; color:var(--accent-strong);">R$0,00</div>
+                        </div>
+                        <input type="hidden" id="servicePrice" name="servicePrice" value="">
                     </div>
                     <div class="form-group">
                         <label for="date">Data Desejada *</label>
@@ -211,8 +217,8 @@
                 </div>
 
                 <div style="text-align: center;">
-                    <li><a href="pix.html" class="btn-primary">Pagar</a></li>
-                </div>
+                    <button type="button" id="payButton" class="btn-secondary btn-lg" onclick="selecionarServico()">Pagar</button>
+                </div> 
             </form>
 
             <div style="text-align: center; margin-top: 3rem;">
@@ -288,6 +294,8 @@
             };
             
             console.log('Agendamento:', bookingData);
+            // Salvar último agendamento no localStorage
+            try { localStorage.setItem('lastBooking', JSON.stringify(bookingData)); } catch (err) { console.warn('localStorage indisponível:', err); }
             
             // Mostrar mensagem de sucesso
             const successMsg = document.getElementById('successMessage');
@@ -306,12 +314,55 @@
                 const msg = `Olá! Gostaria de confirmar meu agendamento:\n\nNome: ${name}\nServiço: ${service}\nData: ${date}\nHorário: ${time}`;
                 window.open(`https://wa.me/5511987654321?text=${encodeURIComponent(msg)}`, '_blank');
             }, 1500);
+
+            // Redirecionar automaticamente para a página de pagamento via PIX com valor do serviço (se aplicável)
+            const preco = document.getElementById('servicePrice') && document.getElementById('servicePrice').value ? document.getElementById('servicePrice').value : (document.getElementById('service') && document.getElementById('service').selectedOptions[0].dataset.preco);
+            if (preco) {
+                setTimeout(() => {
+                    const servicoNome = document.getElementById('service').selectedOptions[0].textContent.trim();
+                    window.location.href = `pix.html?valor=${encodeURIComponent(preco)}&servico=${encodeURIComponent(servicoNome)}`;
+                }, 2200);
+            }
         });
         
         // Definir data mínima como hoje
         const dateInput = document.getElementById('date');
         const today = new Date().toISOString().split('T')[0];
         dateInput.setAttribute('min', today);
+
+        
+function atualizarValorServico() {
+    const select = document.getElementById('service');
+    const precoSpan = document.getElementById('precoServico');
+    const precoInput = document.getElementById('servicePrice');
+    const group = document.getElementById('precoServicoGroup');
+    const selected = select.options[select.selectedIndex];
+    const preco = selected ? selected.dataset.preco : '';
+    if (preco) {
+        precoSpan.textContent = `R$${Number(preco).toFixed(2).replace('.', ',')}`;
+        precoInput.value = preco;
+        group.style.display = 'block';
+    } else {
+        precoSpan.textContent = 'R$0,00';
+        precoInput.value = '';
+        group.style.display = 'none';
+    }
+}
+
+function selecionarServico() {
+    const select = document.getElementById('service');
+    const selected = select.options[select.selectedIndex];
+    if (!selected || !selected.value) {
+        alert('Por favor, selecione um serviço.');
+        return;
+    }
+    const valor = selected.dataset.preco || '';
+    const servico = selected.textContent.trim();
+    // Redireciona para a página de pagamento (PIX) com parâmetros
+    window.location.href = `pix.html?valor=${encodeURIComponent(valor)}&servico=${encodeURIComponent(servico)}`;
+} 
+
+
     </script>
 </body>
 </html>
