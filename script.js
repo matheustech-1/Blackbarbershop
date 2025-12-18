@@ -378,7 +378,7 @@ if (!prefersReducedMotion) {
 //Pagamentos por PIX - QR Code
 
 function gerarPix(valor) {
-  const chave = "11-989389074"; // SUA CHAVE PIX AQUI
+  const chave = "e4e04715-0840-4d47-a338-e529efc59907"; // SUA CHAVE PIX AQUI
   const nomeRecebedor = "Black Barber";
   const cidade = "SAO PAULO";
   
