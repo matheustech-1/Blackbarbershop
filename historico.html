@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Histórico de pagamentos - Black Barber Shop">
+    <title>Histórico de Pagamentos - Black Barber Shop</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .historico-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .historico-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .historico-filtro {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .historico-filtro select,
+        .historico-filtro input {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 1rem;
+        }
+
+        .historico-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .stat-card {
+            background: var(--muted);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-strong);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--accent-strong);
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: var(--text);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pagamentos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .pagamento-item {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: var(--transition);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .pagamento-item:hover {
+            box-shadow: 0 8px 20px var(--shadow);
+            border-color: var(--accent);
+        }
+
+        .pagamento-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .pagamento-servico {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent-strong);
+            margin-bottom: 0.5rem;
+        }
+
+        .pagamento-data {
+            font-size: 0.9rem;
+            color: var(--text);
+            opacity: 0.7;
+        }
+
+        .pagamento-valor {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #28a745;
+            min-width: 120px;
+            text-align: right;
+        }
+
+        .pagamento-status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-confirmado {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pendente {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-cancelado {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .pagamento-acoes {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+            font-weight: 600;
+        }
+
+        .btn-view {
+            background: var(--accent-strong);
+            color: #fff;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .btn-delete {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .btn-delete:hover {
+            background: #f5c6cb;
+        }
+
+        .vazio-container {
+            text-align: center;
+            padding: 3rem 2rem;
+            background: var(--muted);
+            border-radius: 12px;
+            border: 2px dashed var(--border);
+        }
+
+        .vazio-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .vazio-titulo {
+            font-size: 1.5rem;
+            color: var(--accent-strong);
+            margin-bottom: 0.5rem;
+        }
+
+        .vazio-descricao {
+            color: var(--text);
+            opacity: 0.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-detail {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-detail.show {
+            display: flex;
+        }
+
+        .modal-content-detail {
+            background: var(--bg);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .modal-header-detail h2 {
+            margin: 0;
+            color: var(--accent-strong);
+        }
+
+        .modal-close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .modal-body-detail {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .detail-value {
+            color: var(--accent-strong);
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .pagamento-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .pagamento-valor {
+                text-align: left;
+            }
+
+            .historico-header {
+                flex-direction: column;
+            }
+
+            .historico-filtro {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .historico-filtro select,
+            .historico-filtro input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-logo">
+                <span class="logo-icon">✂️</span>
+                <span class="logo-text">BLACK BARBER</span>
+            </div>
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                <span></span><span></span><span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="index.html#home" class="nav-link">Home</a></li>
+                <li><a href="index.html#services" class="nav-link">Serviços</a></li>
+                <li><a href="index.html#pricing" class="nav-link">Planos</a></li>
+                <li><a href="marcar.html" class="nav-link">Agendar</a></li>
+                <li><a href="historico.html" class="nav-link">Histórico</a></li>
+                <li><a href="contact.html" class="nav-link">Contato</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero" style="min-height: 50vh;">
+        <div class="hero-content">
+            <h1 class="hero-title fade-in-up">📋 Histórico de Pagamentos</h1>
+            <p class="hero-subtitle fade-in-up" style="animation-delay: 0.2s;">Acompanhe todos os seus pagamentos</p>
+        </div>
+    </section>
+
+    <section class="fade-in-section">
+        <div class="historico-container">
+            <!-- Estatísticas -->
+            <div class="historico-stats">
+                <div class="stat-card">
+                    <div class="stat-label">💰 Total Pago</div>
+                    <div class="stat-value" id="totalPago">R$ 0,00</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">✅ Confirmados</div>
+                    <div class="stat-value" id="confirmados">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">⏳ Pendentes</div>
+                    <div class="stat-value" id="pendentes">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">📊 Total de Transações</div>
+                    <div class="stat-value" id="totalTransacoes">0</div>
+                </div>
+            </div>
+
+            <!-- Filtros -->
+            <div class="historico-header">
+                <h2 style="margin: 0; color: var(--accent-strong);">Seus Pagamentos</h2>
+                <div class="historico-filtro">
+                    <select id="filtroStatus" onchange="filtrarPagamentos()">
+                        <option value="">📌 Todos os Status</option>
+                        <option value="confirmado">✅ Confirmado</option>
+                        <option value="pendente">⏳ Pendente</option>
+                        <option value="cancelado">❌ Cancelado</option>
+                    </select>
+                    <input type="text" id="buscaServico" placeholder="🔍 Buscar serviço..." onkeyup="filtrarPagamentos()">
+                </div>
+            </div>
+
+            <!-- Lista de Pagamentos -->
+            <div id="pagamentosList" class="pagamentos-list">
+                <!-- Preenchido por JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Modal de Detalhes -->
+    <div id="modalDetail" class="modal-detail">
+        <div class="modal-content-detail">
+            <div class="modal-header-detail">
+                <h2>Detalhes do Pagamento</h2>
+                <button class="modal-close-btn" onclick="fecharModal()">&times;</button>
+            </div>
+            <div class="modal-body-detail" id="modalBodyDetail">
+                <!-- Preenchido por JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>BLACK BARBER SHOP</h4>
+                <p>Barbearia especializada em cabelo afro com atendimento premium.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Links Rápidos</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="services.html">Serviços</a></li>
+                    <li><a href="marcar.html">Agendar</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Redes Sociais</h4>
+                <div class="social-links">
+                    <a href="https://instagram.com/black.barbershop_" aria-label="Instagram">📱</a>
+                    <a href="tel:+5511987654321" aria-label="Telefone">☎️</a>
+                    <a href="https://wa.me/5511987654321" aria-label="WhatsApp">💬</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 BLACK BARBER SHOP. Todos os direitos reservados.</p>
+        </div>
+    </footer>
+
+    <button class="scroll-to-top" id="scrollToTop" aria-label="Voltar ao topo">↑</button>
+
+    <script src="script.js"></script>
+    <script>
+        /**
+         * Sistema de Histórico de Pagamentos
+         * Gerencia pagamentos salvos no localStorage
+         */
+
+        // Estrutura de um pagamento
+        const estruturaPagamento = {
+            id: null,
+            servico: '',
+            valor: 0,
+            data: '',
+            hora: '',
+            status: 'confirmado', // confirmado, pendente, cancelado
+            metodo: 'pix',
+            descricao: '',
+            timestamp: null
+        };
+
+        // Carregar pagamentos ao abrir a página
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarPagamentos();
+        });
+
+        /**
+         * Salvar novo pagamento
+         */
+        function salvarPagamento(servico, valor, descricao = '') {
+            const pagamento = {
+                id: gerarId(),
+                servico: servico,
+                valor: parseFloat(valor),
+                data: new Date().toLocaleDateString('pt-BR'),
+                hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+                status: 'confirmado',
+                metodo: 'pix',
+                descricao: descricao,
+                timestamp: Date.now()
+            };
+
+            // Buscar histórico existente
+            let historico = JSON.parse(localStorage.getItem('historicoPageamentos') || '[]');
+            historico.unshift(pagamento);
+
+            // Salvar apenas últimos 100 pagamentos
+            if (historico.length > 100) {
+                historico = historico.slice(0, 100);
+            }
+
+            localStorage.setItem('historicoPageamentos', JSON.stringify(historico));
+            carregarPagamentos();
+
+            return pagamento;
+        }
+
+        /**
+         * Carregar e exibir pagamentos
+         */
+        function carregarPagamentos() {
+            const historico = JSON.parse(localStorage.getItem('historicoPageamentos') || '[]');
+            const container = document.getElementById('pagamentosList');
+
+            if (historico.length === 0) {
+                container.innerHTML = `
+                    <div class="vazio-container">
+                        <div class="vazio-icon">💳</div>
+                        <div class="vazio-titulo">Nenhum pagamento realizado</div>
+                        <div class="vazio-descricao">Seus pagamentos aparecerão aqui após realizar o primeiro agendamento</div>
+                        <a href="marcar.html" class="btn-primary">Agendar Agora</a>
+                    </div>
+                `;
+                atualizarEstatisticas([]);
+                return;
+            }
+
+            // Renderizar pagamentos
+            container.innerHTML = historico.map(pag => `
+                <div class="pagamento-item">
+                    <div class="pagamento-info">
+                        <div class="pagamento-servico">💇‍♂️ ${pag.servico}</div>
+                        <div class="pagamento-data">📅 ${pag.data} às ${pag.hora}</div>
+                    </div>
+                    <div class="pagamento-valor">R$ ${pag.valor.toFixed(2).replace('.', ',')}</div>
+                    <span class="pagamento-status status-${pag.status}">
+                        ${getStatusIcon(pag.status)} ${getStatusText(pag.status)}
+                    </span>
+                    <div class="pagamento-acoes">
+                        <button class="btn-small btn-view" onclick="verDetalhes('${pag.id}')">👁️ Ver</button>
+                        <button class="btn-small btn-delete" onclick="deletarPagamento('${pag.id}')">🗑️ Del</button>
+                    </div>
+                </div>
+            `).join('');
+
+            atualizarEstatisticas(historico);
+        }
+
+        /**
+         * Filtrar pagamentos
+         */
+        function filtrarPagamentos() {
+            const status = document.getElementById('filtroStatus').value;
+            const busca = document.getElementById('buscaServico').value.toLowerCase();
+            const historico = JSON.parse(localStorage.getItem('historicoPageamentos') || '[]');
+
+            const filtrados = historico.filter(pag => {
+                const matchStatus = !status || pag.status === status;
+                const matchBusca = !busca || pag.servico.toLowerCase().includes(busca);
+                return matchStatus && matchBusca;
+            });
+
+            const container = document.getElementById('pagamentosList');
+
+            if (filtrados.length === 0) {
+                container.innerHTML = `
+                    <div class="vazio-container">
+                        <div class="vazio-icon">🔍</div>
+                        <div class="vazio-titulo">Nenhum resultado encontrado</div>
+                        <div class="vazio-descricao">Tente ajustar seus filtros de busca</div>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filtrados.map(pag => `
+                <div class="pagamento-item">
+                    <div class="pagamento-info">
+                        <div class="pagamento-servico">💇‍♂️ ${pag.servico}</div>
+                        <div class="pagamento-data">📅 ${pag.data} às ${pag.hora}</div>
+                    </div>
+                    <div class="pagamento-valor">R$ ${pag.valor.toFixed(2).replace('.', ',')}</div>
+                    <span class="pagamento-status status-${pag.status}">
+                        ${getStatusIcon(pag.status)} ${getStatusText(pag.status)}
+                    </span>
+                    <div class="pagamento-acoes">
+                        <button class="btn-small btn-view" onclick="verDetalhes('${pag.id}')">👁️ Ver</button>
+                        <button class="btn-small btn-delete" onclick="deletarPagamento('${pag.id}')">🗑️ Del</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /**
+         * Ver detalhes do pagamento
+         */
+        function verDetalhes(id) {
+            const historico = JSON.parse(localStorage.getItem('historicoPageamentos') || '[]');
+            const pagamento = historico.find(p => p.id === id);
+
+            if (!pagamento) return;
+
+            const modal = document.getElementById('modalDetail');
+            const modalBody = document.getElementById('modalBodyDetail');
+
+            modalBody.innerHTML = `
+                <div class="detail-row">
+                    <span class="detail-label">Serviço:</span>
+                    <span class="detail-value">${pagamento.servico}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Valor:</span>
+                    <span class="detail-value">R$ ${pagamento.valor.toFixed(2).replace('.', ',')}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Data:</span>
+                    <span class="detail-value">${pagamento.data}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Hora:</span>
+                    <span class="detail-value">${pagamento.hora}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Status:</span>
+                    <span class="detail-value">${getStatusText(pagamento.status)}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">Método:</span>
+                    <span class="detail-value">${pagamento.metodo.toUpperCase()}</span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">ID da Transação:</span>
+                    <span class="detail-value" style="font-size: 0.85rem; font-family: monospace;">${pagamento.id}</span>
+                </div>
+                ${pagamento.descricao ? `
+                <div class="detail-row" style="border: none;">
+                    <span class="detail-label">Observações:</span>
+                    <span class="detail-value">${pagamento.descricao}</span>
+                </div>
+                ` : ''}
+            `;
+
+            modal.classList.add('show');
+        }
+
+        /**
+         * Fechar modal
+         */
+        function fecharModal() {
+            document.getElementById('modalDetail').classList.remove('show');
+        }
+
+        /**
+         * Deletar pagamento
+         */
+        function deletarPagamento(id) {
+            if (!confirm('Tem certeza que deseja deletar este pagamento?')) return;
+
+            let historico = JSON.parse(localStorage.getItem('historicoPageamentos') || '[]');
+            historico = historico.filter(p => p.id !== id);
+            localStorage.setItem('historicoPageamentos', JSON.stringify(historico));
+
+            carregarPagamentos();
+        }
+
+        /**
+         * Atualizar estatísticas
+         */
+        function atualizarEstatisticas(historico) {
+            const totalPago = historico.reduce((sum, p) => sum + p.valor, 0);
+            const confirmados = historico.filter(p => p.status === 'confirmado').length;
+            const pendentes = historico.filter(p => p.status === 'pendente').length;
+
+            document.getElementById('totalPago').textContent = `R$ ${totalPago.toFixed(2).replace('.', ',')}`;
+            document.getElementById('confirmados').textContent = confirmados;
+            document.getElementById('pendentes').textContent = pendentes;
+            document.getElementById('totalTransacoes').textContent = historico.length;
+        }
+
+        /**
+         * Utilitários
+         */
+        function gerarId() {
+            return 'TXN-' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        function getStatusIcon(status) {
+            const icons = {
+                'confirmado': '✅',
+                'pendente': '⏳',
+                'cancelado': '❌'
+            };
+            return icons[status] || '❓';
+        }
+
+        function getStatusText(status) {
+            const texts = {
+                'confirmado': 'Confirmado',
+                'pendente': 'Pendente',
+                'cancelado': 'Cancelado'
+            };
+            return texts[status] || 'Desconhecido';
+        }
+
+        // Fechar modal ao clicar fora
+        document.getElementById('modalDetail').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modalDetail')) {
+                fecharModal();
+            }
+        });
+
+        // Exportar função para integração com outros arquivos
+        window.salvarPagamento = salvarPagamento;
+    </script>
+</body>
+</html>
